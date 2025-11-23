@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<h3>Productos</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-sm-4"><input type="text" class="form-control" name="q" placeholder="Buscar" value="{{ q }}"></div>
+  <div class="col-sm-4"><input type="text" class="form-control" name="categoria" placeholder="Categoría" value="{{ categoria }}"></div>
+  <div class="col-sm-2"><button class="btn btn-primary w-100" type="submit">Filtrar</button></div>
+  <div class="col-sm-2"><a class="btn btn-outline-secondary w-100" href="{% url 'productos:lista' %}">Limpiar</a></div>
+</form>
+<div class="row row-cols-1 row-cols-md-3 g-3">
+  {% for p in productos %}
+  <div class="col">
+    <div class="card h-100">
+      {% if p.imagen %}<img src="{{ p.imagen.url }}" class="card-img-top" alt="{{ p.nombre }}">{% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ p.nombre }}</h5>
+        <p class="card-text">{{ p.descripcion|default:"" }}</p>
+        <p class="card-text"><strong>Precio:</strong> $ {{ p.precio|floatformat:0|intcomma }}</p>
+        <p class="card-text">
+          {% if p.stock <= p.stock_minimo %}
+            <span class="badge bg-danger">Stock: {{ p.stock }}</span>
+          {% else %}
+            <span class="badge bg-success">Stock: {{ p.stock }}</span>
+          {% endif %}
+        </p>
+        <form action="{% url 'pedidos:carrito_agregar' p.id %}" method="post" class="d-flex gap-2">
+          {% csrf_token %}
+          <input type="number" min="1" value="1" name="cantidad" class="form-control" style="max-width:120px">
+          <button class="btn btn-success" type="submit">Agregar al carrito</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p>No hay productos.</p>
+  {% endfor %}
+</div>
+{% endblock %}

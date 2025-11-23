@@ -1,0 +1,347 @@
+/* Variables globales */
+:root {
+    --primary-color: #e83e8c;   /* rosa intenso principal */
+    --secondary-color: #ffd6e8; /* rosa pastel para fondos */
+    --accent-color: #ff7f50;    /* coral para botones/acento */
+    --light-color: #fff7fb;
+    --dark-color: #343a40;      /* gris oscuro suave */
+    --gray-100: #f8f9fa;
+    --gray-200: #eceff4;
+    --gray-600: #6c757d;
+    --box-shadow: 0 0.5rem 1rem rgba(232, 62, 140, 0.15);
+    --transition: all 0.3s ease;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--dark-color);
+    line-height: 1.6;
+    background: radial-gradient(circle at top left, #ffeaf5 0, #fff7fb 40%, #ffffff 100%);
+}
+
+/* Barra de navegación */
+.navbar.navbar-dark.bg-dark {
+    background: #1f2430;
+    box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.35);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.88);
+    font-weight: 500;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .nav-link:focus {
+    color: var(--secondary-color);
+}
+
+.navbar-dark .navbar-nav .nav-link.active {
+    color: #ffffff;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+/* Barra de navegación clara principal */
+.navbar-main,
+.navbar-main.bg-dark,
+.navbar-main.navbar-dark {
+    background-color: #ffffff !important;  /* fondo blanco sólido siempre */
+    box-shadow: 0 0.35rem 1rem rgba(0, 0, 0, 0.1);
+    z-index: 1030;
+}
+
+.navbar-main .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--primary-color) !important;
+}
+
+.navbar-main .navbar-brand:hover,
+.navbar-main .navbar-brand:focus {
+    color: #d63384 !important;
+}
+
+.navbar-main .navbar-nav .nav-link {
+    color: #252932 !important;             /* gris muy oscuro para máximo contraste */
+    font-weight: 500;
+}
+
+.navbar-main .navbar-nav .nav-link:hover,
+.navbar-main .navbar-nav .nav-link:focus {
+    color: var(--primary-color) !important;
+}
+
+.navbar-main .navbar-nav .nav-link.active {
+    color: var(--primary-color) !important;
+    border-bottom: 2px solid var(--primary-color);
+}
+
+.hero-section .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section h1 {
+    font-weight: 800;
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section p.lead {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Secciones */
+.section-title {
+    position: relative;
+    margin-bottom: 3rem;
+}
+
+.section-title h2 {
+    font-weight: 700;
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+    padding-bottom: 0.5rem;
+}
+
+.section-title h2::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 80px;
+    height: 3px;
+    background: var(--primary-color);
+    transform: translateX(-50%);
+}
+
+.section-title p.lead {
+    color: var(--gray-600);
+    margin-bottom: 0;
+}
+
+/* Tarjetas de categoría */
+.category-card {
+    transition: var(--transition);
+    background: white;
+    border-radius: 10px;
+    padding: 2rem 1.5rem;
+    height: 100%;
+    border: 1px solid var(--gray-200);
+    text-align: center;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow);
+}
+
+.category-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(232, 62, 140, 0.1);
+    border-radius: 50%;
+    transition: var(--transition);
+}
+
+.category-card:hover .category-icon {
+    background: rgba(232, 62, 140, 0.2);
+    transform: scale(1.05);
+}
+
+/* Tarjetas de testimonio */
+.testimonial-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+    height: 100%;
+    border: 1px solid var(--gray-200);
+}
+
+.testimonial-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow);
+}
+
+/* Sección "Comprar por Ocación" */
+.ocasion-card {
+    background: var(--gray-200);
+    position: relative;
+    border-radius: 14px;
+}
+
+.ocasion-overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.45));
+}
+
+.ocasion-title {
+    color: #ffffff;
+    font-weight: 700;
+    letter-spacing: .5px;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+}
+
+/* Botones */
+.btn {
+    padding: 0.6rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    transition: var(--transition);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #d63384;
+    border-color: #d63384;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(232, 62, 140, 0.3);
+}
+
+.btn-outline-light {
+    color: #ffffff;
+    border-color: rgba(255,255,255,0.7);
+}
+
+.btn-outline-light:hover {
+    color: #ffffff;
+    background-color: rgba(255,255,255,0.12);
+    border-color: #ffffff;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 100px 0;
+        min-height: 60vh;
+    }
+    
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-section p.lead {
+        font-size: 1.25rem;
+    }
+    
+    .section-title h2 {
+        font-size: 1.8rem;
+    }
+    
+    .category-card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Efectos de hover */
+.card {
+    transition: var(--transition);
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid var(--gray-200);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--box-shadow);
+}
+
+.card-img-top {
+    transition: var(--transition);
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+/* Footer */
+.footer-site {
+    background: #1f2430;
+    color: #f8f9fa;
+}
+
+.footer-site h5 {
+    color: #f8f9fa;
+}
+
+.footer-site .footer-links a {
+    color: #dee2e6;
+}
+
+.footer-site .footer-links a:hover {
+    color: #ffffff;
+}
+
+.footer-site .footer-social-link {
+    color: #f8f9fa;
+}
+
+.footer-site .footer-social-link:hover {
+    color: #ffffff;
+}
+
+/* Botón flotante de WhatsApp */
+.whatsapp-float {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1050;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: #25d366;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+    transition: transform .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
+
+.whatsapp-float:hover {
+    text-decoration: none;
+    background-color: #1ebe5d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .35);
+}
+
+@media (max-width: 576px) {
+    .whatsapp-float {
+        right: 16px;
+        bottom: 16px;
+        width: 52px;
+        height: 52px;
+        font-size: 24px;
+    }
+}

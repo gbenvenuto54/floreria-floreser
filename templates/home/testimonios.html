@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Testimonios - Florería FloreSer{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="container">
+        <h1 class="mb-4 text-center">Testimonios de nuestros clientes</h1>
+        <p class="text-center text-muted mb-5">
+            Historias reales de personas que confiaron en Florería FloreSer.
+        </p>
+
+        {% if testimonios %}
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            {% for t in testimonios %}
+            <div class="col">
+                <div class="card h-100 testimonial-card">
+                    <div class="card-body text-center">
+                        {% if t.imagen %}
+                        <img src="{{ t.imagen.url }}"
+                             class="rounded-circle mb-3"
+                             alt="{{ t.nombre }}"
+                             style="width: 100px; height: 100px; object-fit: cover;">
+                        {% endif %}
+                        <p class="card-text mb-3">"{{ t.contenido }}"</p>
+                        <h5 class="card-title mb-0">{{ t.nombre }}</h5>
+                        {% if t.cargo %}
+                        <small class="text-muted">{{ t.cargo }}</small>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info text-center">
+            Aún no hay testimonios publicados. Pronto los verás aquí.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

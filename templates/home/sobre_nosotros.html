@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sobre Nosotros - Florería FloreSer{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="container">
+        <h1 class="text-center mb-4">Sobre Florería Andina</h1>
+
+        <!-- Imagen destacada -->
+        <div class="mb-4">
+            <div class="rounded-4 overflow-hidden shadow-sm">
+                <img src="{% static 'img/sobre-nosotros.png' %}"
+                     alt="Arreglo de rosas rojas"
+                     class="w-100"
+                     style="max-height: 320px; object-fit: cover;">
+            </div>
+        </div>
+
+        <!-- Texto principal -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <p class="lead">
+                    Bienvenido a Florería Andina, su oasis floral en el corazón de Chile. Nacimos de la pasión por la
+                    naturaleza y el deseo de llevar la belleza y la emoción de las flores a cada hogar y ocasión.
+                    Desde nuestros inicios en 2010, nos hemos dedicado a seleccionar las flores más frescas y vibrantes,
+                    tanto de nuestros propios cultivos sostenibles como de los mejores productores locales e
+                    internacionales.
+                </p>
+                <p>
+                    En Florería Andina, creemos que cada flor cuenta una historia y cada arreglo es una obra de arte.
+                    Nuestros talentosos floristas combinan creatividad, experiencia y un profundo conocimiento de la flora
+                    para diseñar composiciones únicas que capturan la esencia de sus sentimientos. Desde la majestuosidad
+                    de un ramo de rosas hasta la delicadeza de una orquídea, cada producto es elaborado con amor y
+                    atención al detalle.
+                </p>
+                <p>
+                    Estamos comprometidos con la calidad, la frescura y un servicio excepcional. Valoramos la conexión
+                    con nuestros clientes y nos esforzamos por superar sus expectativas en cada entrega. Gracias por
+                    elegir Florería Andina para ser parte de sus momentos más especiales.
+                    <strong>¡Deje que la belleza de nuestras flores hable por usted!</strong>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Inicio - Florería FloreSer{% endblock %}
+
+{% block content %}
+<!-- Sección de Banners -->
+{% if banners %}
+<div id="bannerCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-inner">
+        {% for banner in banners %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <div class="banner" style="
+                background: url('{{ banner.imagen.url }}') no-repeat center center;
+                background-size: cover;
+                height: 80vh;
+                position: relative;
+            ">
+                <div class="container h-100 d-flex align-items-center">
+                    <div class="banner-content text-white" style="max-width: 600px;">
+                        <h1 class="display-4">{{ banner.titulo }}</h1>
+                        {% if banner.subtitulo %}
+                        <p class="lead">{{ banner.subtitulo }}</p>
+                        {% endif %}
+                        {% if banner.texto_boton and banner.enlace %}
+                        <a href="{{ banner.enlace }}" class="btn btn-primary btn-lg">
+                            {{ banner.texto_boton }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Sección de Productos Destacados -->
+<section id="productos" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5">Nuestros Productos Destacados</h2>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for p in productos_destacados %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if p.imagen %}
+                    <img src="{{ p.imagen.url }}" class="card-img-top" alt="{{ p.nombre }}" style="height:{% if configuracion %}{{ configuracion.alto_imagen_destacado }}{% else %}220{% endif %}px; object-fit:cover;">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title mb-2">{{ p.nombre }}</h6>
+                        <p class="text-primary fw-bold mb-0">${{ p.precio|floatformat:0|intcomma }} CLP</p>
+                    </div>
+                    <div class="card-footer bg-white border-0 pb-3 px-3">
+                        <form action="{% url 'pedidos:carrito_agregar' p.id %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="cantidad" value="1">
+                            <button class="btn btn-primary w-100" type="submit">Añadir al Carrito</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <p>Próximamente tendremos productos destacados para ti.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Comprar por Ocación -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Comprar por Ocación</h2>
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+            {% for tile in ocasion_tiles %}
+            <div class="col">
+                <a class="text-decoration-none" href="{% url 'productos:lista' %}?categoria={{ tile.categoria }}">
+                    <div class="ocasion-card position-relative rounded overflow-hidden shadow-sm"
+                         style="height:{% if configuracion %}{{ configuracion.alto_imagen_ocasion }}{% else %}230{% endif %}px;">
+                        {% if tile.imagen_url %}
+                        <img src="{{ tile.imagen_url }}" alt="{{ tile.titulo }}" class="w-100 h-100" style="object-fit:cover;">
+                        {% else %}
+                        <div class="w-100 h-100 bg-secondary"></div>
+                        {% endif %}
+                        <div class="ocasion-overlay position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                            <h5 class="ocasion-title m-0 text-center">{{ tile.titulo }}</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Sección de Testimonios -->
+{% if testimonios %}
+<section id="testimonios" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-5">Lo que dicen nuestros clientes</h2>
+        <div class="row">
+            {% for testimonio in testimonios|slice:":3" %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        {% if testimonio.imagen %}
+                        <img src="{{ testimonio.imagen.url }}" 
+                             class="rounded-circle mb-3" 
+                             alt="{{ testimonio.nombre }}"
+                             style="width: 100px; height: 100px; object-fit: cover;">
+                        {% endif %}
+                        <p class="card-text">"{{ testimonio.contenido }}"</p>
+                        <h5 class="card-title">{{ testimonio.nombre }}</h5>
+                        {% if testimonio.cargo %}
+                        <p class="text-muted">{{ testimonio.cargo }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Sección de Contacto -->
+<section id="contacto" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-4">Contáctanos</h2>
+        <div class="row g-4 align-items-stretch">
+            <div class="col-lg-6">
+                {% if configuracion and configuracion.direccion %}
+                <div class="mb-3">
+                    <h5 class="mb-1">Nuestra ubicación</h5>
+                    <p class="mb-2">{{ configuracion.direccion }}</p>
+                </div>
+                {% endif %}
+                <div class="ratio ratio-16x9 shadow-sm rounded overflow-hidden">
+                    <iframe
+                        src="https://www.google.com/maps?q={% if configuracion and configuracion.direccion %}{{ configuracion.direccion|urlencode }}{% else %}Santiago%2C%20Chile{% endif %}&output=embed"
+                        style="border:0;"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <form method="post" action="{% url 'home:enviar_contacto' %}">
+                    {% csrf_token %}
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" name="nombre" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="mensaje" class="form-label">Mensaje</label>
+                            <textarea class="form-control" id="mensaje" name="mensaje" rows="4" required></textarea>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary">Enviar mensaje</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Efecto de desplazamiento suave para los enlaces del menú
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+    });
+</script>
+{% endblock %}

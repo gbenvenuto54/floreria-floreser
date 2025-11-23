@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Preguntas frecuentes - Florería FloreSer{% endblock %}
+
+{% block content %}
+<div class="py-5">
+    <div class="container">
+        <h1 class="mb-4 text-center">Preguntas frecuentes</h1>
+        <p class="text-center text-muted mb-5">
+            Aquí encontrarás respuestas a las dudas más comunes sobre nuestros productos y servicios.
+        </p>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+
+                <div class="accordion" id="faqAccordion">
+
+                    <!-- Pedido y compra -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq-heading-1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq-collapse-1" aria-expanded="true"
+                                    aria-controls="faq-collapse-1">
+                                ¿Cómo puedo realizar un pedido?
+                            </button>
+                        </h2>
+                        <div id="faq-collapse-1" class="accordion-collapse collapse show"
+                             aria-labelledby="faq-heading-1" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Elige el producto que te guste, selecciona la cantidad y haz clic en
+                                <strong>“Agregar al carrito”</strong>. Luego puedes finalizar tu compra desde
+                                el carrito, completando tus datos y la información de entrega.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Entregas -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq-heading-2">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq-collapse-2" aria-expanded="false"
+                                    aria-controls="faq-collapse-2">
+                                ¿Realizan entregas a domicilio?
+                            </button>
+                        </h2>
+                        <div id="faq-collapse-2" class="accordion-collapse collapse"
+                             aria-labelledby="faq-heading-2" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Sí, realizamos entregas a domicilio dentro de nuestra zona de cobertura.
+                                Durante el proceso de compra podrás ingresar la dirección y ver las opciones
+                                de horario disponibles.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Horarios -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq-heading-3">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq-collapse-3" aria-expanded="false"
+                                    aria-controls="faq-collapse-3">
+                                ¿Cuál es el horario de atención?
+                            </button>
+                        </h2>
+                        <div id="faq-collapse-3" class="accordion-collapse collapse"
+                             aria-labelledby="faq-heading-3" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                {% if configuracion and configuracion.horario_atencion %}
+                                    Nuestro horario de atención es:
+                                    <strong>{{ configuracion.horario_atencion }}</strong>.
+                                {% else %}
+                                    Nuestro horario de atención depende de la fecha y la demanda.
+                                    Si tienes una duda específica, contáctanos por WhatsApp o correo.
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Métodos de pago -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq-heading-4">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq-collapse-4" aria-expanded="false"
+                                    aria-controls="faq-collapse-4">
+                                ¿Qué métodos de pago aceptan?
+                            </button>
+                        </h2>
+                        <div id="faq-collapse-4" class="accordion-collapse collapse"
+                             aria-labelledby="faq-heading-4" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Aceptamos los medios de pago más habituales (por ejemplo, transferencias y/o
+                                tarjetas a través de plataformas de pago). Los métodos disponibles se muestran
+                                al momento de finalizar tu compra.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cambios y cancelaciones -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq-heading-5">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq-collapse-5" aria-expanded="false"
+                                    aria-controls="faq-collapse-5">
+                                ¿Puedo modificar o cancelar mi pedido?
+                            </button>
+                        </h2>
+                        <div id="faq-collapse-5" class="accordion-collapse collapse"
+                             aria-labelledby="faq-heading-5" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Si necesitas modificar o cancelar tu pedido, contáctanos lo antes posible
+                                indicando tu número de pedido. Haremos todo lo posible por ayudarte, siempre
+                                que el pedido aún no haya sido preparado ni despachado.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contacto -->
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="faq-heading-6">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq-collapse-6" aria-expanded="false"
+                                    aria-controls="faq-collapse-6">
+                                ¿Cómo puedo comunicarme con ustedes?
+                            </button>
+                        </h2>
+                        <div id="faq-collapse-6" class="accordion-collapse collapse"
+                             aria-labelledby="faq-heading-6" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                {% if configuracion and configuracion.telefono %}
+                                    Puedes llamarnos o escribirnos al teléfono
+                                    <strong>{{ configuracion.telefono }}</strong>.
+                                {% endif %}
+                                {% if configuracion and configuracion.email %}
+                                    También puedes escribirnos a
+                                    <strong>{{ configuracion.email }}</strong>.
+                                {% endif %}
+                                {% if configuracion and configuracion.whatsapp_numero %}
+                                    Además, tienes a tu disposición el botón flotante de
+                                    <strong>WhatsApp</strong> en la esquina inferior derecha de la página.
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
