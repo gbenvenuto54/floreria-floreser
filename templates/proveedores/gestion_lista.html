@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Gestión de Proveedores</h3>
+<div class="d-flex justify-content-between mb-3">
+  <form class="d-flex" method="get">
+    <input type="text" class="form-control me-2" name="q" placeholder="Buscar" value="{{ q }}">
+    <button class="btn btn-outline-primary" type="submit">Buscar</button>
+  </form>
+  <a href="{% url 'proveedores:crear' %}" class="btn btn-success">Nuevo proveedor</a>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr><th>Empresa</th><th>Contacto</th><th>Correo</th><th>Teléfono</th><th></th></tr>
+  </thead>
+  <tbody>
+  {% for p in proveedores %}
+    <tr>
+      <td>{{ p.empresa }}</td>
+      <td>{{ p.contacto }}</td>
+      <td>{{ p.correo }}</td>
+      <td>{{ p.telefono }}</td>
+      <td class="text-end">
+        <a class="btn btn-sm btn-secondary" href="{% url 'proveedores:registrar_entrega' p.id %}">Registrar entrega</a>
+        <a class="btn btn-sm btn-primary" href="{% url 'proveedores:editar' p.id %}">Editar</a>
+        <a class="btn btn-sm btn-outline-danger" href="{% url 'proveedores:eliminar' p.id %}">Eliminar</a>
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5">Sin proveedores.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

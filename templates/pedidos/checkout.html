@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<h3>Checkout</h3>
+<form method="post" enctype="multipart/form-data" class="row g-3">
+  {% csrf_token %}
+  <div class="col-md-6">
+    <label class="form-label">Dirección</label>
+    <input class="form-control" name="direccion" value="{{ cliente.direccion }}">
+  </div>
+  <div class="col-md-4">
+    <label class="form-label">Comuna</label>
+    <input class="form-control" name="comuna" value="{{ cliente.comuna }}">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label">Pago</label>
+    <select name="metodo_pago" id="metodoPago" class="form-select">
+      <option value="Tarjeta">Tarjeta de crédito</option>
+      <option value="Débito">Tarjeta de débito</option>
+      <option value="Transferencia">Transferencia bancaria</option>
+      <option value="Efectivo">Efectivo</option>
+    </select>
+  </div>
+  <div class="col-12">
+    <div id="infoPago" class="alert alert-info" role="alert" style="display:none;"></div>
+  </div>
+  <div class="col-md-6" id="refBox" style="display:none;">
+    <label class="form-label">Referencia/Comprobante (Transferencia)</label>
+    <input class="form-control" name="referencia_pago" placeholder="Ej: Nº operación o adjuntar luego por WhatsApp/Email">
+    <div class="form-text">Requerido si eliges Transferencia.</div>
+  </div>
+  <div class="col-md-6" id="fileBox" style="display:none;">
+    <label class="form-label">Subir comprobante (imagen o PDF)</label>
+    <input type="file" name="comprobante_pago" accept="image/*,application/pdf" class="form-control">
+    <div class="form-text">Opcional. Puedes adjuntarlo ahora o enviarlo luego.</div>
+  </div>
+  <div class="col-12">
+    <h5>Resumen</h5>
+    <ul class="list-group mb-3">
+      {% for p, cant, total_linea in items %}
+        <li class="list-group-item d-flex justify-content-between">
+          <div>{{ p.nombre }} <small class="text-muted">x {{ cant }}</small></div>
+          <span>$ {{ total_linea|intcomma }}</span>
+        </li>
+      {% endfor %}
+      <li class="list-group-item d-flex justify-content-between"><strong>Subtotal</strong><strong>$ {{ subtotal|intcomma }}</strong></li>
+      <li class="list-group-item d-flex justify-content-between">IVA 19%<strong>$ {{ iva|intcomma }}</strong></li>
+      <li class="list-group-item d-flex justify-content-between"><strong>Total</strong><strong>$ {{ total|intcomma }}</strong></li>
+    </ul>
+  </div>
+  <div class="col-12 d-flex gap-2">
+    <a href="{% url 'pedidos:carrito' %}" class="btn btn-outline-secondary">Volver</a>
+    <button class="btn btn-success" type="submit">Confirmar pedido</button>
+  </div>
+</form>
+
+<script>
+  (function(){
+    const sel = document.getElementById('metodoPago');
+    const box = document.getElementById('infoPago');
+    const refBox = document.getElementById('refBox');
+    const fileBox = document.getElementById('fileBox');
+    const textos = {
+      'Tarjeta': 'Pagarás con tarjeta de crédito al momento de la entrega o por enlace seguro (coordinar).',
+      'Débito': 'Pagarás con tarjeta de débito al momento de la entrega o por enlace seguro (coordinar).',
+      'Transferencia': 'Transfiere a: Banco Ejemplo, CTA 12-345678-9, RUT 12.345.678-9, Email pagos@floreser.cl. Enviar comprobante.',
+      'Efectivo': 'Pagarás en efectivo al momento de la entrega. Por favor prepara el monto indicado.'
+    };
+    function update(){
+      const v = sel.value;
+      if(textos[v]){ box.style.display = 'block'; box.textContent = textos[v]; }
+      else { box.style.display = 'none'; box.textContent = ''; }
+      const isTrans = v === 'Transferencia';
+      refBox.style.display = isTrans ? 'block' : 'none';
+      fileBox.style.display = isTrans ? 'block' : 'none';
+    }
+    sel.addEventListener('change', update);
+    update();
+  })();
+  </script>
+{% endblock %}

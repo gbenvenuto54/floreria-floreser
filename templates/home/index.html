@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Florería FloreSer{% endblock %}
+
+{% block content %}
+    <!-- Secciones dinámicas -->
+    {% for seccion in secciones %}
+        {% if seccion.tipo == 'banner' %}
+            <!-- Banner Principal -->
+            <section class="hero-section" style="background: url('{{ seccion.imagen.url }}') no-repeat center center; background-size: cover; min-height: 80vh; display: flex; align-items: center; position: relative; margin-top: -76px;">
+                <div class="overlay"></div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8 mx-auto text-center text-white">
+                            <h1 class="display-4 fw-bold mb-4">{{ seccion.titulo }}</h1>
+                            <p class="lead mb-4">{{ seccion.subtitulo }}</p>
+                            <a href="#productos" class="btn btn-primary btn-lg">Ver Colección</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        {% elif seccion.tipo == 'categorias' %}
+            <!-- Categorías -->
+            <section class="py-5" id="categorias">
+                <div class="container">
+                    <div class="section-title text-center mb-5">
+                        <h2>{{ seccion.titulo }}</h2>
+                        <p class="lead">{{ seccion.subtitulo }}</p>
+                    </div>
+                    <div class="row g-4">
+                        {% for contenido in seccion.contenidos.all %}
+                        <div class="col-md-3 col-6 text-center">
+                            <div class="category-card p-4">
+                                {% if contenido.imagen %}
+                                <div class="category-icon mb-3">
+                                    <img src="{{ contenido.imagen.url }}" alt="{{ contenido.titulo }}" class="img-fluid" style="max-height: 80px;">
+                                </div>
+                                {% endif %}
+                                <h5>{{ contenido.titulo }}</h5>
+                                <p class="text-muted">{{ contenido.descripcion }}</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+        {% elif seccion.tipo == 'testimonios' %}
+            <!-- Testimonios -->
+            <section class="py-5 bg-light">
+                <div class="container">
+                    <div class="section-title text-center mb-5">
+                        <h2>{{ seccion.titulo }}</h2>
+                        <p class="lead">{{ seccion.subtitulo }}</p>
+                    </div>
+                    <div class="row g-4">
+                        {% for testimonio in testimonios %}
+                        <div class="col-md-4">
+                            <div class="testimonial-card p-4 h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    {% if testimonio.imagen %}
+                                    <img src="{{ testimonio.imagen.url }}" alt="{{ testimonio.nombre }}" class="rounded-circle me-3" width="60">
+                                    {% endif %}
+                                    <div>
+                                        <h5 class="mb-0">{{ testimonio.nombre }}</h5>
+                                        {% if testimonio.cargo %}
+                                        <p class="text-muted mb-0 small">{{ testimonio.cargo }}</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <p class="mb-0">"{{ testimonio.contenido }}"</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+        {% else %}
+            <!-- Otras secciones genéricas -->
+            <section class="py-5 {% if forloop.counter|divisibleby:2 %}bg-light{% endif %}">
+                <div class="container">
+                    {% if seccion.titulo or seccion.subtitulo %}
+                    <div class="section-title text-center mb-5">
+                        {% if seccion.titulo %}<h2>{{ seccion.titulo }}</h2>{% endif %}
+                        {% if seccion.subtitulo %}<p class="lead">{{ seccion.subtitulo }}</p>{% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if seccion.imagen %}
+                    <div class="text-center mb-4">
+                        <img src="{{ seccion.imagen.url }}" alt="{{ seccion.titulo }}" class="img-fluid rounded">
+                    </div>
+                    {% endif %}
+                    
+                    {% if seccion.contenido %}
+                    <div class="row justify-content-center">
+                        <div class="col-lg-10">
+                            {{ seccion.contenido|safe }}
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if seccion.contenidos.exists %}
+                    <div class="row g-4 mt-3">
+                        {% for contenido in seccion.contenidos.all %}
+                        <div class="col-md-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                {% if contenido.imagen %}
+                                <img src="{{ contenido.imagen.url }}" class="card-img-top" alt="{{ contenido.titulo }}">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ contenido.titulo }}</h5>
+                                    {% if contenido.descripcion %}
+                                    <p class="card-text">{{ contenido.descripcion }}</p>
+                                    {% endif %}
+                                    {% if contenido.enlace %}
+                                    <a href="{{ contenido.enlace }}" class="btn btn-outline-primary">Ver más</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </section>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .hero-section {
+        position: relative;
+        overflow: hidden;
+    }
+    .hero-section .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+    }
+    .hero-section .container {
+        position: relative;
+        z-index: 1;
+    }
+    .category-card {
+        transition: transform 0.3s ease;
+        border: 1px solid #eee;
+        border-radius: 8px;
+    }
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .testimonial-card {
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    }
+    .section-title h2 {
+        position: relative;
+        padding-bottom: 15px;
+    }
+    .section-title h2:after {
+        content: '';
+        position: absolute;
+        display: block;
+        width: 50px;
+        height: 3px;
+        background: #0d6efd;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Activar tooltips de Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Eliminar producto</h3>
+<p>¿Seguro que deseas eliminar "{{ obj }}"?</p>
+<form method="post" class="d-flex gap-2">
+  {% csrf_token %}
+  <a class="btn btn-outline-secondary" href="{% url 'productos:gestion_lista' %}">Cancelar</a>
+  <button type="submit" class="btn btn-danger">Eliminar</button>
+</form>
+{% endblock %}

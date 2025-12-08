@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Reporte de auditoría</h3>
+<form class="row g-2 mb-3" method="get">
+  <div class="col-md-3">
+    <label class="form-label">Inicio</label>
+    <input type="date" name="inicio" class="form-control" value="{{ inicio|date:'Y-m-d' }}">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Fin</label>
+    <input type="date" name="fin" class="form-control" value="{{ fin|date:'Y-m-d' }}">
+  </div>
+  <div class="col-md-2">
+    <label class="form-label">Modelo</label>
+    <select name="modelo" class="form-select">
+      <option value="">— Todos —</option>
+      {% for m in modelos %}
+        <option value="{{ m }}" {% if modelo_sel == m %}selected{% endif %}>{{ m }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label class="form-label">Acción</label>
+    <select name="accion" class="form-select">
+      <option value="">— Todas —</option>
+      <option value="create" {% if accion_sel == 'create' %}selected{% endif %}>create</option>
+      <option value="update" {% if accion_sel == 'update' %}selected{% endif %}>update</option>
+      <option value="delete" {% if accion_sel == 'delete' %}selected{% endif %}>delete</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <label class="form-label">Usuario</label>
+    <select name="usuario" class="form-select">
+      <option value="">— Todos —</option>
+      {% for u in usuarios %}
+        <option value="{{ u.id }}" {% if usuario_sel == u.id %}selected{% endif %}>{{ u.username }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-12 d-flex gap-2 mt-2">
+    <button class="btn btn-primary" type="submit">Filtrar</button>
+    <a class="btn btn-outline-secondary" href="{% url 'reportes:auditoria' %}">Limpiar</a>
+    <a class="btn btn-outline-success" href="?{% if request.GET %}{{ request.GET.urlencode }}&{% endif %}export=xlsx">Exportar XLSX</a>
+  </div>
+</form>
+<table class="table table-striped">
+  <thead>
+    <tr><th>Fecha</th><th>Acción</th><th>Modelo</th><th>Objeto</th><th>Usuario</th><th>IP</th><th>Detalle</th></tr>
+  </thead>
+  <tbody>
+  {% for a in logs %}
+    <tr>
+      <td>{{ a.created_at|date:'d-m-Y H:i' }}</td>
+      <td><span class="badge bg-info">{{ a.action }}</span></td>
+      <td>{{ a.model }}</td>
+      <td>{{ a.object_id }}</td>
+      <td>{{ a.user.username|default:'-' }}</td>
+      <td>{{ a.ip|default:'-' }}</td>
+      <td><code style="white-space: pre-wrap;">{{ a.detail }}</code></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="7">Sin registros.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

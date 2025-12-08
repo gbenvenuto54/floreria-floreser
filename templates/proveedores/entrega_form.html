@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Registrar entrega — {{ proveedor.empresa }}</h3>
+<form method="post" class="row g-3">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <div class="col-12 d-flex gap-2">
+    <a href="{% url 'proveedores:gestion_lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+    <button class="btn btn-primary" type="submit">Registrar</button>
+  </div>
+</form>
+{% endblock %}

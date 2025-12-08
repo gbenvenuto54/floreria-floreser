@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Reporte: Proveedores activos</h3>
+<p>Últimos 90 días desde {{ desde|date:'d-m-Y H:i' }}</p>
+<div class="mb-3">
+  <a class="btn btn-outline-success" href="?export=xlsx">Exportar XLSX</a>
+</div>
+<table class="table table-striped">
+  <thead>
+    <tr><th>Empresa</th><th>Contacto</th><th>Correo</th><th>Teléfono</th></tr>
+  </thead>
+  <tbody>
+  {% for prov in proveedores %}
+    <tr>
+      <td>{{ prov.empresa }}</td>
+      <td>{{ prov.contacto }}</td>
+      <td>{{ prov.correo }}</td>
+      <td>{{ prov.telefono }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">Sin proveedores activos en el período.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load humanize %}
+{% block content %}
+<h3>Pedido #{{ pedido.id }}</h3>
+<div class="row g-3 mb-3">
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Datos del pedido</h5>
+        <p class="mb-1"><strong>Fecha:</strong> {{ pedido.fecha_pedido|date:'d-m-Y H:i' }}</p>
+        <p class="mb-1"><strong>Cliente:</strong> {{ pedido.cliente.nombre }} ({{ pedido.cliente.rut }})</p>
+        <p class="mb-1"><strong>Estado:</strong> {{ pedido.estado }}</p>
+        <p class="mb-1"><strong>Método de pago:</strong> {{ pedido.metodo_pago }}</p>
+        {% if pedido.referencia_pago %}
+          <p class="mb-1"><strong>Referencia:</strong> {{ pedido.referencia_pago }}</p>
+        {% endif %}
+        {% if pedido.comprobante_pago %}
+          <p class="mb-1"><strong>Comprobante:</strong> <a href="{{ pedido.comprobante_pago.url }}" target="_blank">Ver archivo</a></p>
+        {% endif %}
+        <p class="mb-0"><strong>Entrega:</strong> {{ pedido.direccion_entrega }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Totales</h5>
+        <p class="mb-1"><strong>Subtotal:</strong> $ {{ pedido.subtotal|intcomma }}</p>
+        <p class="mb-1"><strong>IVA 19%:</strong> $ {{ pedido.iva|intcomma }}</p>
+        <p class="mb-0"><strong>Total:</strong> $ {{ pedido.total|intcomma }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h5>Ítems</h5>
+<table class="table table-striped align-middle">
+  <thead>
+    <tr><th>Producto</th><th class="text-center">Cant.</th><th class="text-end">Precio</th><th class="text-end">Total</th></tr>
+  </thead>
+  <tbody>
+  {% for obj in items_info %}
+    <tr>
+      <td>{{ obj.item.producto.nombre }}</td>
+      <td class="text-center">{{ obj.item.cantidad }}</td>
+      <td class="text-end">$ {{ obj.item.precio_unitario|intcomma }}</td>
+      <td class="text-end">$ {{ obj.line_total|intcomma }}</td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="4">Sin ítems.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+<div class="d-flex gap-2">
+  <a href="{% url 'pedidos:gestion' %}" class="btn btn-outline-secondary">Volver</a>
+  <a href="{% url 'pedidos:comprobante_pdf' pedido.id %}" target="_blank" class="btn btn-outline-primary">Comprobante PDF</a>
+</div>
+{% endblock %}

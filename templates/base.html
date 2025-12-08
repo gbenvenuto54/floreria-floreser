@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+{% load static %}
+{% load i18n %}
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% if configuracion %}{{ configuracion.nombre_sitio }}{% else %}Florería FloreSer{% endif %}{% endblock %}</title>
+    
+    <!-- Favicon -->
+    {% if configuracion and configuracion.favicon %}
+    <link rel="icon" href="{{ configuracion.favicon.url }}">
+    {% endif %}
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-main fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home:index' %}">
+                {% if configuracion and configuracion.logo %}
+                <img src="{{ configuracion.logo.url }}" alt="{{ configuracion.nombre_sitio }}" height="40">
+                {% else %}
+                FloreSer
+                {% endif %}
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                {% url 'home:index' as home_url %}
+                {% url 'home:sobre_nosotros' as sobre_url %}
+                {% url 'productos:lista' as productos_url %}
+                {% url 'home:testimonios' as testimonios_url %}
+                {% url 'home:index' as home_url3 %}
+                {% url 'pedidos:carrito' as carrito_url %}
+                {% url 'clientes:perfil' as cli_perfil_url %}
+                {% url 'clientes:mis_pedidos' as cli_misped_url %}
+                {% url 'productos:crear' as prod_crear_url %}
+                {% url 'admin:index' as admin_index_url %}
+                {% url 'logout' as logout_url %}
+                {% url 'login' as login_url %}
+                <ul class="navbar-nav me-auto">
+                    {% if home_url %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ home_url }}#inicio">Inicio</a>
+                    </li>
+                    {% endif %}
+                    {% if sobre_url %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ sobre_url }}">Sobre Nosotros</a>
+                    </li>
+                    {% endif %}
+                    {% if productos_url %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ productos_url }}">Productos</a>
+                    </li>
+                    {% endif %}
+                    {% if testimonios_url %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ testimonios_url }}">Testimonios</a>
+                    </li>
+                    {% endif %}
+                    {% if home_url3 %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ home_url3 }}#contacto">Contacto</a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <div class="d-flex">
+                    <a href="{{ carrito_url|default:'#' }}" class="btn btn-outline-primary me-2">
+                        <i class="bi bi-cart"></i> Carrito
+                        <span class="badge bg-primary ms-1">0</span>
+                    </a>
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{ user.username }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            {% if cli_perfil_url %}
+                            <li><a class="dropdown-item" href="{{ cli_perfil_url }}">Mi Perfil</a></li>
+                            {% endif %}
+                            {% if cli_misped_url %}
+                            <li><a class="dropdown-item" href="{{ cli_misped_url }}">Mis Pedidos</a></li>
+                            {% endif %}
+                            {% if user.is_staff and admin_index_url %}
+                            <li><a class="dropdown-item" href="{{ admin_index_url }}">Administración</a></li>
+                            {% endif %}
+                            {% if user.is_staff and prod_crear_url %}
+                            <li><a class="dropdown-item" href="{{ prod_crear_url }}">Agregar producto</a></li>
+                            {% endif %}
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form action="{{ logout_url|default:'#' }}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">Cerrar Sesión</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'signup' %}" class="btn btn-primary">
+                            Registrarse
+                        </a>
+                        <a href="{{ login_url|default:'#' }}" class="btn btn-outline-primary">
+                            <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div style="padding-top: 76px;">
+        {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer-site py-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Enlaces Rápidos -->
+                <div class="col-lg-4">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul class="list-unstyled footer-links">
+                        {% url 'home:sobre_nosotros' as sobre_url %}
+                        {% url 'productos:lista' as prodf_url %}
+                        {% url 'home:testimonios' as testimoniosf_url %}
+                        {% url 'home:faq' as faq_url %}
+                        <li class="mb-2">
+                            <a href="{{ sobre_url|default:'#' }}" class="text-decoration-none">Sobre Nosotros</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{{ prodf_url|default:'#' }}" class="text-decoration-none">Productos</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{{ homef_url|default:'#' }}#contacto" class="text-decoration-none">Contacto</a>
+                        </li>
+                        <li class="mb-2">
+                            <a href="{{ testimoniosf_url|default:'#' }}" class="text-decoration-none">Testimonios</a>
+                        </li>
+                        {% if faq_url %}
+                        <li class="mb-2">
+                            <a href="{{ faq_url }}" class="text-decoration-none">FAQ</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Contacto -->
+                <div class="col-lg-4">
+                    <h5>Contacto</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            {% if configuracion and configuracion.email %}
+                                {{ configuracion.email }}
+                            {% else %}
+                                hola@floreser.cl
+                            {% endif %}
+                        </li>
+                        <li class="mb-2">
+                            {% if configuracion and configuracion.telefono %}
+                                {{ configuracion.telefono }}
+                            {% else %}
+                                +56 2 2XXX XXXX
+                            {% endif %}
+                        </li>
+                        <li class="mb-2">
+                            {% if configuracion and configuracion.direccion %}
+                                {{ configuracion.direccion }}
+                            {% else %}
+                                Av. Principal 1234, Santiago
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Síguenos -->
+                <div class="col-lg-4">
+                    <h5>Síguenos</h5>
+                    <div class="d-flex align-items-center gap-3 mt-2">
+                        {% if configuracion and configuracion.facebook_url %}
+                        <a href="{{ configuracion.facebook_url }}" class="footer-social-link" target="_blank">
+                            <i class="bi bi-facebook fs-4"></i>
+                        </a>
+                        {% endif %}
+                        {% if configuracion and configuracion.instagram_url %}
+                        <a href="{{ configuracion.instagram_url }}" class="footer-social-link" target="_blank">
+                            <i class="bi bi-instagram fs-4"></i>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0 small">&copy; {% now "Y" %} {% if configuracion %}{{ configuracion.nombre_sitio }}{% else %}Florería FloreSer{% endif %}. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% if configuracion and configuracion.whatsapp_numero %}
+    <a href="https://wa.me/{{ configuracion.whatsapp_numero }}" class="whatsapp-float" target="_blank" aria-label="Chat por WhatsApp">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+    {% endif %}
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
