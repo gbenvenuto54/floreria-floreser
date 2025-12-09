@@ -97,6 +97,9 @@
                             {% if user.is_staff and admin_index_url %}
                             <li><a class="dropdown-item" href="{{ admin_index_url }}">Administración</a></li>
                             {% endif %}
+                            {% if user.is_staff %}
+                            <li><a class="dropdown-item" href="{% url 'reportes:index' %}">Reportes</a></li>
+                            {% endif %}
                             {% if user.is_staff and prod_crear_url %}
                             <li><a class="dropdown-item" href="{{ prod_crear_url }}">Agregar producto</a></li>
                             {% endif %}

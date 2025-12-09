@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 from decimal import Decimal
+import ast
+import re
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.db.models import Sum, F, Count
@@ -28,6 +30,48 @@ def _parse_date(s):
 def _clp_fmt(value: int) -> str:
     s = f"{int(value):,}".replace(",", ".")
     return f"$ {s}"
+
+
+_ILLEGAL_XLSX_CHARS_RE = re.compile(r"[\x00-\x08\x0B-\x0C\x0E-\x1F]")
+
+
+def _clean_xlsx_value(value):
+    """Convierte el valor a texto simple y elimina caracteres ilegales para XLSX."""
+    if value is None:
+        return ""
+    s = str(value)
+    return _ILLEGAL_XLSX_CHARS_RE.sub("", s)
+
+
+def _parse_detail_to_dict(detail: str):
+    """Intenta convertir el texto de detail en un dict limpio.
+
+    - Elimina constructores como Decimal('12345').
+    - Reemplaza representaciones de ImageFieldFile por la ruta del archivo.
+    - Si no puede parsear, devuelve None.
+    """
+    if not detail:
+        return None
+
+    s = str(detail)
+    # Reemplazar Decimal('123') -> '123'
+    s = re.sub(r"Decimal\('([^']*)'\)", r"'\\1'", s)
+    # Reemplazar representaciones de archivos tipo <ImageFieldFile: path>, <FieldFile: None>, etc. -> 'valor'
+    # Captura cualquier clase que termine con 'File' y toma lo que sigue a los dos puntos.
+    s = re.sub(r"<[^:>]*File:\s*([^>]+)>", r"'\\1'", s)
+    # Reemplazar rutas de enums/clases tipo MovimientoInventario.Tipo.SALIDA -> 'SALIDA'
+    # Coincide con palabras separadas por puntos terminando en MAYÚSCULAS o mayúsculas+guiones bajos
+    s = re.sub(r"\b(?:[A-Za-z_][A-Za-z0-9_]*\.)+([A-Z_][A-Z0-9_]*)\b", r"'\\1'", s)
+
+    try:
+        data = ast.literal_eval(s)
+    except Exception:
+        return None
+
+    if isinstance(data, dict):
+        # Convertir todo a texto simple
+        return {str(k): '' if v is None else str(v) for k, v in data.items()}
+    return None
 
 
 @role_required('Administrador')
@@ -228,24 +272,49 @@ def reporte_auditoria(request):
     usuarios = Usuario.objects.all().only('id', 'username')
 
     if export == 'xlsx':
+        logs = list(qs.order_by('-created_at')[:5000])
+        # Parsear detalles una vez y recolectar todas las claves
+        parsed_details = []
+        all_keys = set()
+        for a in logs:
+            d = _parse_detail_to_dict(a.detail)
+            parsed_details.append(d)
+            if isinstance(d, dict):
+                all_keys.update(d.keys())
+
+        extra_cols = sorted(all_keys)
+
         wb = Workbook(); ws = wb.active; ws.title = 'Auditoría'
-        ws.append(['Fecha', 'Acción', 'Modelo', 'Objeto', 'Usuario', 'IP', 'Detalle'])
-        for a in qs.order_by('-created_at')[:5000]:
-            ws.append([
+        header = ['Fecha', 'Acción', 'Modelo', 'Objeto', 'Usuario', 'IP'] + extra_cols
+        ws.append([_clean_xlsx_value(h) for h in header])
+
+        for a, d in zip(logs, parsed_details):
+            base = [
                 a.created_at.strftime('%Y-%m-%d %H:%M'),
                 a.action,
                 a.model,
                 a.object_id,
                 getattr(a.user, 'username', ''),
                 a.ip or '',
-                a.detail,
-            ])
+            ]
+            if isinstance(d, dict):
+                row = base + [d.get(k, '') for k in extra_cols]
+            else:
+                # Si no se pudo parsear, poner todo el detail en la primera columna extra
+                first_extra = (a.detail or '') if extra_cols else ''
+                extras = [first_extra] + [''] * (len(extra_cols) - 1)
+                row = base + extras
+            ws.append([_clean_xlsx_value(v) for v in row])
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=auditoria.xlsx'
         wb.save(response); return response
 
+    logs = list(qs.order_by('-created_at')[:200])
+    for a in logs:
+        a.detail_dict = _parse_detail_to_dict(a.detail)
+
     return render(request, 'reportes/auditoria.html', {
-        'logs': qs.order_by('-created_at')[:200],
+        'logs': logs,
         'modelos': modelos,
         'usuarios': usuarios,
         'modelo_sel': modelo,
